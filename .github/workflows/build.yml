@@ -26,10 +26,14 @@ jobs:
 
       - name: Download clang toolchain
         run: |
-          curl -sSL -o /tmp/toolchain.tar.xz \
-            "https://github.com/theos/toolchain/releases/download/linux-12.0.0/linux-12.0.0.tar.xz"
+          sudo apt-get install -y lzma
+          curl -sSL -o /tmp/toolchain.tar.lzma \
+            "https://github.com/sbingner/llvm-project/releases/download/v10.0.0-1/linux-ios-arm64e-clang-toolchain.tar.lzma"
+          TMP=$(mktemp -d)
+          tar -xvf /tmp/toolchain.tar.lzma -C $TMP
           mkdir -p /opt/theos/toolchain/linux/iphone
-          tar -xJf /tmp/toolchain.tar.xz -C /opt/theos/toolchain/linux/iphone/ --strip-components=1
+          mv $TMP/ios-arm64e-clang-toolchain/* /opt/theos/toolchain/linux/iphone/
+          rm -r $TMP /tmp/toolchain.tar.lzma
 
       - name: Build
         run: |
