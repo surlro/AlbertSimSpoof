@@ -1,0 +1,9 @@
+Package: com.albertprobe.simspoof
+Name: AlbertSimSpoof
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: Companion tweak: spoof DeviceInfo fields for activation identity substitution
+Maintainer: AlbertProbe
+Author: AlbertProbe
+Section: Tweaks
+Depends: mobilesubstrate
