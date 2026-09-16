@@ -12,24 +12,23 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y fakeroot zstd curl git
+        run: sudo apt-get install -y fakeroot curl git xz-utils
 
       - name: Install Theos
-        run: |
-          git clone --recursive https://github.com/theos/theos.git /opt/theos
+        run: git clone --recursive https://github.com/theos/theos.git /opt/theos
 
-      - name: Download iOS SDK
+      - name: Download iOS 16.5 SDK
         run: |
-          curl -sSL -o sdk.tar.zst \
-            "https://github.com/theos/sdks/releases/download/2024-09-18/iPhoneOS16.5.sdk.tar.zst"
-          zstd -d sdk.tar.zst -o sdk.tar
-          tar -xf sdk.tar -C /opt/theos/sdks/
-          rm sdk.tar.zst sdk.tar
+          mkdir -p /opt/theos/sdks
+          curl -sSL -o /tmp/sdk.tar.xz \
+            "https://github.com/theos/sdks/releases/download/master-146e41f/iPhoneOS16.5.sdk.tar.xz"
+          tar -xJf /tmp/sdk.tar.xz -C /opt/theos/sdks/
+          echo "SDKs available:"
+          ls /opt/theos/sdks/
 
       - name: Build
         run: |
           export THEOS=/opt/theos
-          export THEOS_MAKE_PATH=/opt/theos/makefiles
           make package FINALPACKAGE=1 2>&1
 
       - name: Upload dylib
