@@ -12,19 +12,26 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y fakeroot zstd
+        run: sudo apt-get install -y fakeroot zstd curl git
 
       - name: Install Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git /opt/theos
-          curl -sSL https://github.com/theos/sdks/releases/download/2024-09-18/iPhoneOS16.5.sdk.tar.zst | \
-            tar -I zstd -xf - -C /opt/theos/sdks/
+
+      - name: Download iOS SDK
+        run: |
+          curl -sSL -o sdk.tar.zst \
+            "https://github.com/theos/sdks/releases/download/2024-09-18/iPhoneOS16.5.sdk.tar.zst"
+          zstd -d sdk.tar.zst -o sdk.tar
+          tar -xf sdk.tar -C /opt/theos/sdks/
+          rm sdk.tar.zst sdk.tar
 
       - name: Build
         run: |
           export THEOS=/opt/theos
-          make package FINALPACKAGE=1
-        
+          export THEOS_MAKE_PATH=/opt/theos/makefiles
+          make package FINALPACKAGE=1 2>&1
+
       - name: Upload dylib
         uses: actions/upload-artifact@v4
         with:
@@ -39,3 +46,4 @@ jobs:
         with:
           name: AlbertSimSpoof-deb
           path: packages/*.deb
+          if-no-files-found: warn
