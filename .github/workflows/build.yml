@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get install -y fakeroot curl git xz-utils
+        run: sudo apt-get install -y fakeroot curl git xz-utils lzma libtinfo5
 
       - name: Install Theos
         run: git clone --recursive https://github.com/theos/theos.git /opt/theos
