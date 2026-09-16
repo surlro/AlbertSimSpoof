@@ -7,14 +7,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: |
-          sudo apt-get install -y fakeroot curl git xz-utils lzma libtinfo6
-          sudo ln -sf /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.5
+        run: sudo apt-get install -y fakeroot curl git xz-utils lzma libtinfo5
 
       - name: Install Theos
         run: git clone --recursive https://github.com/theos/theos.git /opt/theos
