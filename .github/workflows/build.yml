@@ -23,8 +23,13 @@ jobs:
           curl -sSL -o /tmp/sdk.tar.xz \
             "https://github.com/theos/sdks/releases/download/master-146e41f/iPhoneOS16.5.sdk.tar.xz"
           tar -xJf /tmp/sdk.tar.xz -C /opt/theos/sdks/
-          echo "SDKs available:"
-          ls /opt/theos/sdks/
+
+      - name: Download clang toolchain
+        run: |
+          curl -sSL -o /tmp/toolchain.tar.xz \
+            "https://github.com/theos/toolchain/releases/download/linux-12.0.0/linux-12.0.0.tar.xz"
+          mkdir -p /opt/theos/toolchain/linux/iphone
+          tar -xJf /tmp/toolchain.tar.xz -C /opt/theos/toolchain/linux/iphone/ --strip-components=1
 
       - name: Build
         run: |
