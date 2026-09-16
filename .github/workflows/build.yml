@@ -1,1 +1,41 @@
+name: Build AlbertSimSpoof
 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y fakeroot zstd
+
+      - name: Install Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git /opt/theos
+          curl -sSL https://github.com/theos/sdks/releases/download/2024-09-18/iPhoneOS16.5.sdk.tar.zst | \
+            tar -I zstd -xf - -C /opt/theos/sdks/
+
+      - name: Build
+        run: |
+          export THEOS=/opt/theos
+          make package FINALPACKAGE=1
+        
+      - name: Upload dylib
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlbertSimSpoof-dylib
+          path: |
+            .theos/obj/debug/arm64/AlbertSimSpoof.dylib
+            .theos/obj/debug/arm64e/AlbertSimSpoof.dylib
+            layout/Library/MobileSubstrate/DynamicLibraries/AlbertSimSpoof.plist
+
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlbertSimSpoof-deb
+          path: packages/*.deb
